@@ -12,7 +12,7 @@
 
 int main(int argc, char** argv)
 {
-	const char* filename = argc >= 2 ? argv[1] : "hello2.jpg";
+	const char* filename = argc >= 2 ? argv[1] : "hello.jpg";
 	Mat src = imread(filename,1);
 
 	if(src.empty())
@@ -21,19 +21,18 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	Mat dst;
-	//src.copyTo(dst);
 	imshow("hello",src);
 
-	Mat imageChannel[4] ;
+	Mat imageChannel[3] ;
+	EqualizeHist eh;
 	
+	//split hsv image
 	cvtColor(src,dst,CV_BGR2HSV);
 	imshow("hsv",dst);
 	split(dst,imageChannel);
-	imshow("imageChannel1",imageChannel[2]);
+	imshow("imageChannel_V",imageChannel[2]);
 
 	Mat temp;
-	imageChannel[2].copyTo(temp);
-	EqualizeHist eh;
 	eh.process(imageChannel[2],temp);
 	imshow("temp",temp);
 	imageChannel[2] = temp;
@@ -42,6 +41,20 @@ int main(int argc, char** argv)
 	merge(imageChannel,3,dst2);
 	imshow("dst",dst2);
 	imshow("diff",dst2-dst);
+
+	//split rgb image 
+	split(src,imageChannel);
+	Mat tempR,tempG,tempB;
+	eh.process(imageChannel[0],tempB);
+	imageChannel[0] = tempB;
+	eh.process(imageChannel[1],tempG);
+	imageChannel[1] = tempG;
+	eh.process(imageChannel[2],tempR);
+	imageChannel[2] = tempR;
+	Mat newDst;
+	merge(imageChannel,3,newDst);
+	imshow("newDst",newDst);
+
 
 	waitKey(0);
 }

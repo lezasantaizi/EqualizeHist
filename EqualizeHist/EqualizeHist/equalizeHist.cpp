@@ -19,8 +19,17 @@ EqualizeHist::~EqualizeHist()
 
 void EqualizeHist::process(Mat src, Mat& dst)
 {
+	for (int i = 0; i<256; i++)
+	{
+		pixelArr[i] = 0;
+		sumPixelArr[i] = 0;
+	}
+	pixelMax = 0;
+	pixelMin = 256;
+
 	int width = src.cols;
 	int height = src.rows;
+	dst.create(Size(width,height),src.type());
 
 	for (int i = 0; i< height; i++)
 	{
